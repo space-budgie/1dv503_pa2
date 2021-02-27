@@ -11,5 +11,6 @@ with open("artworks_original.csv", encoding="utf-8-sig") as f:
     with open("artworks.csv", "w") as f2:
         write_file = csv.writer(f2)
         for row in original:
-            row_length = len(row)
-            write_file.writerow( (row[i] for i in indexes_to_keep if i < row_length) )
+            if row:
+                row_length = len(row)
+                write_file.writerow( (row[i] for i in indexes_to_keep if i < row_length) )
