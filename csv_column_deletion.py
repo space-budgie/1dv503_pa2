@@ -2,7 +2,7 @@ import csv
 
 # https://stackoverflow.com/questions/7588934/how-to-delete-columns-in-a-csv-file
 # Keep these columns from the detailed description of artworks (artworks_detailed.csv), and write the result to artworks.csv
-columns_to_keep = ["Title", "Artist", "Date", "Medium", "Dimensions", "URL", "Circumference (cm)", "Depth (cm)", "Diameter (cm)", "Height (cm)", "Length (cm)", "Weight (kg)", "Width (cm)", "Seat Height (cm)", "Duration (sec.)"]
+columns_to_keep = ["Title", "Artist", "Date", "Medium", "Dimensions", "URL"]
 
 with open("artworks_original.csv", encoding="utf-8-sig") as f:
     original = list(csv.reader(f, delimiter=','))
