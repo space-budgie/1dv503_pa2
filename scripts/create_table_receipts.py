@@ -1,3 +1,5 @@
+# Generate SQL command to add logically coherent, randomly generated data to the receipts table 
+
 import mysql.connector
 from mysql.connector import errorcode
 from random import randint
