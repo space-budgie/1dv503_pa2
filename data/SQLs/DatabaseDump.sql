@@ -23,15 +23,15 @@ DROP TABLE IF EXISTS `Artwork`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Artwork` (
-  `id` mediumint unsigned NOT NULL AUTO_INCREMENT,
+  `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
   `title` varchar(61) NOT NULL,
   `artist` varchar(30) NOT NULL,
   `year` int DEFAULT NULL,
   `medium` varchar(70) DEFAULT NULL,
   `dimensions` varchar(79) DEFAULT NULL,
-  `url` varchar(109) DEFAULT NULL,
-  `initialPrice` int DEFAULT NULL,
-  `sold` tinyint(1) DEFAULT NULL,
+  `url` varchar(109) DEFAULT NULL UNIQUE,
+  `initialPrice` int NOT NULL,
+  `sold` tinyint(1) NOT NULL,
   `location` mediumint unsigned NOT NULL,
   `seller` mediumint unsigned NOT NULL,
   PRIMARY KEY (`id`),
@@ -60,8 +60,8 @@ DROP TABLE IF EXISTS `AuctionHouse`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `AuctionHouse` (
-  `id` mediumint unsigned NOT NULL AUTO_INCREMENT,
-  `Name` varchar(255) DEFAULT NULL,
+  `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
+  `Name` varchar(255) NOT NULL UNIQUE,
   `PhoneNumber` varchar(100) DEFAULT NULL,
   `City` varchar(255) DEFAULT NULL,
   `PostalCode` varchar(10) DEFAULT NULL,
@@ -88,13 +88,13 @@ DROP TABLE IF EXISTS `Buyer`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Buyer` (
-  `id` mediumint unsigned NOT NULL AUTO_INCREMENT,
-  `Name` varchar(255) DEFAULT NULL,
-  `PhoneNumber` varchar(100) DEFAULT NULL,
+  `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
+  `Name` varchar(255) NOT NULL,
+  `PhoneNumber` varchar(100) DEFAULT NULL UNIQUE,
   `City` varchar(255) DEFAULT NULL,
   `PostalCode` varchar(10) DEFAULT NULL,
   `Country` varchar(100) DEFAULT NULL,
-  `CreditCard` varchar(255) DEFAULT NULL,
+  `CreditCard` varchar(255) NOT NULL UNIQUE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -117,7 +117,7 @@ DROP TABLE IF EXISTS `Receipts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Receipts` (
-  `id` mediumint unsigned NOT NULL AUTO_INCREMENT,
+  `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
   `date` date NOT NULL,
   `finalPrice` bigint NOT NULL,
   `artwork` mediumint unsigned NOT NULL,
@@ -151,13 +151,13 @@ DROP TABLE IF EXISTS `Seller`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Seller` (
-  `id` mediumint unsigned NOT NULL AUTO_INCREMENT,
-  `Name` varchar(255) DEFAULT NULL,
-  `PhoneNumber` varchar(100) DEFAULT NULL,
+  `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
+  `Name` varchar(255) NOT NULL,
+  `PhoneNumber` varchar(100) DEFAULT NULL UNIQUE,
   `City` varchar(255) DEFAULT NULL,
   `PostalCode` varchar(10) DEFAULT NULL,
   `Country` varchar(100) DEFAULT NULL,
-  `BankAccount` varchar(255) DEFAULT NULL,
+  `BankAccount` varchar(255) NOT NULL UNIQUE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
