@@ -64,13 +64,14 @@ def q1(cursor):
 
 
 # Search unsold by auction house
+# try: Phasellus LLC
 def q2(cursor):
     name = input("Please enter the name of an auction house: ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
         "Artwork.dimensions, Artwork.url, Artwork.initial_price " \
         "FROM Artwork, AuctionHouse " \
-        f"WHERE Artwork.location = AuctionHouse.id AND sold = 0 AND AuctionHouse.name = {name};"
+        f"WHERE Artwork.location = AuctionHouse.id AND sold = 0 AND AuctionHouse.name = '{name}';"
 
     query(cursor, q)
     myresult = cursor.fetchall()
@@ -78,15 +79,16 @@ def q2(cursor):
     print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
 
 # List all purchased artwork (with final price of each) by a selected buyer
+# try: Yvonne Galloway
 def q3(cursor):
-    name = input("Please enter the name of a buyer")
+    name = input("Please enter the name of a buyer: ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
         "Artwork.dimensions, Artwork.url, Receipts.final_price " \
         "FROM Receipts " \
         "JOIN Buyer ON Receipts.buyer = Buyer.id " \
         "JOIN Artwork ON Receipts.artwork = Artwork.id " \
-        f"WHERE Buyer.name = {name}"
+        f"WHERE Buyer.name = '{name}';"
 
     query(cursor, q)
     myresult = cursor.fetchall()
@@ -94,13 +96,14 @@ def q3(cursor):
     print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price' ], tablefmt='psql'))
 
 # List all the artwork and status (sold or not with final price of each in case is sold) by a selected seller
+# try: Ezekiel Cunningham
 def q4(cursor):
     name = input("Please enter the name of a seller: ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
-        "Artwork.dimensions, Artwork.url, Artwork.initial_price, Artwork.sold, Receipts.final_price" \
-        "FROM Artwork, Receipts, Seller" \
-        f"WHERE Artwork.id = Receipts.artwork AND Artwork.seller = Seller.id AND Seller.name = {name};"
+        "Artwork.dimensions, Artwork.url, Artwork.initial_price, Artwork.sold, Receipts.final_price " \
+        "FROM Artwork, Receipts, Seller " \
+        f"WHERE Artwork.id = Receipts.artwork AND Artwork.seller = Seller.id AND Seller.name = '{name}';"
 
     query(cursor, q)
     myresult = cursor.fetchall()
@@ -119,7 +122,7 @@ def q5(cursor):
     q = "SELECT Buyer.name, SUM(Receipts.final_price) AS total_spent " \
         "FROM Buyer " \
         "JOIN Receipts ON Receipts.buyer = Buyer.id " \
-        "GROUP BY Receipts.buyer" \
+        "GROUP BY Receipts.buyer " \
         "ORDER BY total_spent DESC;"
 
     query(cursor, q)
@@ -129,7 +132,7 @@ def q5(cursor):
 
 # View table money transfer
 def q6(cursor):
-    q = "SELECT Seller, SellerAccount, Buyer, BuyerCreditcard, SUM(Amount) AS Amount " \
+    q = "SELECT Seller, Seller_Account, Buyer, Buyer_Credit_Card, SUM(Amount) AS Amount " \
         "FROM Transfer " \
         "GROUP BY Buyer " \
         "ORDER BY Buyer ASC;"
@@ -156,4 +159,4 @@ def q7(cursor):
     query(cursor, q)
     myresult = cursor.fetchall()
 
-    print(tabulate(myresult, headers=['title','final price'], tablefmt='psql'))
+    print(tabulate(myresult, headers=['artwork title','final price'], tablefmt='psql'))
