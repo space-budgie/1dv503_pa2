@@ -1,5 +1,6 @@
 import re
 import mysql.connector
+from tabulate import tabulate
 
 AUTO_COMMIT_ASKED = False
 
@@ -57,6 +58,9 @@ def q1(cursor):
         f"WHERE sold = 0 AND (title = {title} OR artist = {artist});"
 
     query(cursor, q)
+    myresult = cursor.fetchall()
+
+    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
 
 
 # Search unsold by auction house
@@ -69,8 +73,11 @@ def q2(cursor):
         f"WHERE Artwork.location = AuctionHouse.id AND sold = 0 AND AuctionHouse.name = {name};"
 
     query(cursor, q)
+    myresult = cursor.fetchall()
 
+    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
 
+# List all purchased artwork (with final price of each) by a selected buyer
 def q3(cursor):
     name = input("Please enter the name of a buyer")
 
@@ -82,8 +89,11 @@ def q3(cursor):
         f"WHERE Buyer.name = {name}"
 
     query(cursor, q)
+    myresult = cursor.fetchall()
 
+    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price' ], tablefmt='psql'))
 
+# List all the artwork and status (sold or not with final price of each in case is sold) by a selected seller
 def q4(cursor):
     name = input("Please enter the name of a seller: ")
 
@@ -93,8 +103,11 @@ def q4(cursor):
         f"WHERE Artwork.id = Receipts.artwork AND Artwork.seller = Seller.id AND Seller.name = {name};"
 
     query(cursor, q)
+    myresult = cursor.fetchall()
+    
+    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price', 'sold', 'final_price'], tablefmt='psql'))
 
-
+# ???
 def q5(cursor):
     amount = 0
     while not amount:
@@ -110,17 +123,23 @@ def q5(cursor):
         "ORDER BY total_spent DESC;"
 
     query(cursor, q)
+    myresult = cursor.fetchall()
 
+    print(tabulate(myresult, headers=['buyer name','total spent'], tablefmt='psql'))
 
+# View table money transfer
 def q6(cursor):
-    q = "SELECT Seller, Buyer, SUM(Amount) AS Amount, SellerAccount, BuyerCreditcard " \
+    q = "SELECT Seller, SellerAccount, Buyer, BuyerCreditcard, SUM(Amount) AS Amount " \
         "FROM Transfer " \
         "GROUP BY Buyer " \
         "ORDER BY Buyer ASC;"
 
     query(cursor, q)
+    myresult = cursor.fetchall()
 
+    print(tabulate(myresult, headers=['seller','seller bank account','buyer','buyer credit card','total amount'], tablefmt='psql'))
 
+# Artwork sold at a price higher than given
 def q7(cursor):
     price = 0
     while not price:
@@ -135,3 +154,6 @@ def q7(cursor):
         "ORDER BY Receipts.final_price DESC;"
 
     query(cursor, q)
+    myresult = cursor.fetchall()
+
+    print(tabulate(myresult, headers=['title','final price'], tablefmt='psql'))
