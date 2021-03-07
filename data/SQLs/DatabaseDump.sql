@@ -130,7 +130,7 @@ CREATE TABLE `Receipts` (
   `buyer` mediumint unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `artwork` (`artwork`),
-  KEY `auctionHouse` (`auctionHouse`),
+  KEY `auction_house` (`auction_house`),
   KEY `buyer` (`buyer`),
   CONSTRAINT `Receipts_ibfk_1` FOREIGN KEY (`artwork`) REFERENCES `Artwork` (`id`),
   CONSTRAINT `Receipts_ibfk_2` FOREIGN KEY (`auction_house`) REFERENCES `AuctionHouse` (`id`),
@@ -204,10 +204,10 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET @saved_col_connection     = @@collation_connection */;
 /*!50001 SET character_set_client      = utf8mb4 */;
 /*!50001 SET character_set_results     = utf8mb4 */;
-/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 SET collation_connection      = utf8_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `Transfer` AS select `Receipts`.`id` AS `Transaction`,`Seller`.`name` AS `Seller`,`Seller`.`bank_account` AS `Seller_Account`,`Buyer`.`name` AS `Buyer`,`Buyer`.`credit_card` AS `Buyer_Credit_Card`,`Receipts`.`final_price` AS `Amount`, from (((`Receipts` join `Buyer` on((`Receipts`.`buyer` = `Buyer`.`id`))) join `Artwork` on((`Receipts`.`artwork` = `Artwork`.`id`))) join `Seller` on((`Artwork`.`seller` = `Seller`.`id`))) */;
+/*!50001 VIEW `Transfer` AS select `Receipts`.`id` AS `Transaction`,`Seller`.`name` AS `Seller`,`Seller`.`bank_account` AS `Seller_Account`,`Buyer`.`name` AS `Buyer`,`Buyer`.`credit_card` AS `Buyer_Credit_Card`,`Receipts`.`final_price` AS `Amount` from `Receipts` join `Buyer` on `Receipts`.`buyer` = `Buyer`.`id`  join `Artwork` on `Receipts`.`artwork` = `Artwork`.`id` join `Seller` on `Artwork`.`seller` = `Seller`.`id` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
