@@ -30,7 +30,7 @@ CREATE TABLE `Artwork` (
   `medium` varchar(70) DEFAULT NULL,
   `dimensions` varchar(79) DEFAULT NULL,
   `url` varchar(109) DEFAULT NULL UNIQUE,
-  `initialPrice` int NOT NULL,
+  `initial_price` int NOT NULL,
   `sold` tinyint(1) NOT NULL,
   `location` mediumint unsigned NOT NULL,
   `seller` mediumint unsigned NOT NULL,
@@ -61,11 +61,11 @@ DROP TABLE IF EXISTS `AuctionHouse`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `AuctionHouse` (
   `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
-  `Name` varchar(255) NOT NULL UNIQUE,
-  `PhoneNumber` varchar(100) DEFAULT NULL,
-  `City` varchar(255) DEFAULT NULL,
-  `PostalCode` varchar(10) DEFAULT NULL,
-  `Country` varchar(100) DEFAULT NULL,
+  `name` varchar(255) NOT NULL UNIQUE,
+  `phone_number` varchar(100) DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `postal_code` varchar(10) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -89,12 +89,12 @@ DROP TABLE IF EXISTS `Buyer`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Buyer` (
   `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
-  `Name` varchar(255) NOT NULL,
-  `PhoneNumber` varchar(100) DEFAULT NULL UNIQUE,
-  `City` varchar(255) DEFAULT NULL,
-  `PostalCode` varchar(10) DEFAULT NULL,
-  `Country` varchar(100) DEFAULT NULL,
-  `CreditCard` varchar(255) NOT NULL UNIQUE,
+  `name` varchar(255) NOT NULL,
+  `phone_number` varchar(100) DEFAULT NULL UNIQUE,
+  `city` varchar(255) DEFAULT NULL,
+  `postal_code` varchar(10) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `credit_card` varchar(255) NOT NULL UNIQUE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -119,16 +119,16 @@ DROP TABLE IF EXISTS `Receipts`;
 CREATE TABLE `Receipts` (
   `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
   `date` date NOT NULL,
-  `finalPrice` bigint NOT NULL,
+  `final_price` bigint NOT NULL,
   `artwork` mediumint unsigned NOT NULL,
-  `auctionHouse` mediumint unsigned NOT NULL,
+  `auction_house` mediumint unsigned NOT NULL,
   `buyer` mediumint unsigned NOT NULL,
   PRIMARY KEY (`id`),
   KEY `artwork` (`artwork`),
   KEY `auctionHouse` (`auctionHouse`),
   KEY `buyer` (`buyer`),
   CONSTRAINT `Receipts_ibfk_1` FOREIGN KEY (`artwork`) REFERENCES `Artwork` (`id`),
-  CONSTRAINT `Receipts_ibfk_2` FOREIGN KEY (`auctionHouse`) REFERENCES `AuctionHouse` (`id`),
+  CONSTRAINT `Receipts_ibfk_2` FOREIGN KEY (`auction_house`) REFERENCES `AuctionHouse` (`id`),
   CONSTRAINT `Receipts_ibfk_3` FOREIGN KEY (`buyer`) REFERENCES `Buyer` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -152,12 +152,12 @@ DROP TABLE IF EXISTS `Seller`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `Seller` (
   `id` mediumint unsigned NOT NULL UNIQUE AUTO_INCREMENT,
-  `Name` varchar(255) NOT NULL,
-  `PhoneNumber` varchar(100) DEFAULT NULL UNIQUE,
-  `City` varchar(255) DEFAULT NULL,
-  `PostalCode` varchar(10) DEFAULT NULL,
-  `Country` varchar(100) DEFAULT NULL,
-  `BankAccount` varchar(255) NOT NULL UNIQUE,
+  `name` varchar(255) NOT NULL,
+  `phone_number` varchar(100) DEFAULT NULL UNIQUE,
+  `city` varchar(255) DEFAULT NULL,
+  `postal_code` varchar(10) DEFAULT NULL,
+  `country` varchar(100) DEFAULT NULL,
+  `bank_account` varchar(255) NOT NULL UNIQUE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -182,11 +182,11 @@ SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
 /*!50001 CREATE VIEW `Transfer` AS SELECT 
  1 AS `Transaction`,
- 1 AS `SellerAccount`,
- 1 AS `BuyerCreditcard`,
- 1 AS `Amount`,
- 1 AS `seller`,
- 1 AS `buyer`*/;
+ 1 AS `Seller`,
+ 1 AS `Seller_Account`,
+ 1 AS `Buyer`,
+ 1 AS `Buyer_Credit_Card`,
+ 1 AS `Amount`*/;
 SET character_set_client = @saved_cs_client;
 
 --
@@ -202,7 +202,7 @@ SET character_set_client = @saved_cs_client;
 /*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `Transfer` AS select `Receipts`.`id` AS `Transaction`,`Seller`.`BankAccount` AS `SellerAccount`,`Buyer`.`CreditCard` AS `BuyerCreditcard`,`Receipts`.`finalPrice` AS `Amount`,`Seller`.`Name` AS `seller`,`Buyer`.`Name` AS `buyer` from (((`Receipts` join `Buyer` on((`Receipts`.`buyer` = `Buyer`.`id`))) join `Artwork` on((`Receipts`.`artwork` = `Artwork`.`id`))) join `Seller` on((`Artwork`.`seller` = `Seller`.`id`))) */;
+/*!50001 VIEW `Transfer` AS select `Receipts`.`id` AS `Transaction`,`Seller`.`name` AS `Seller`,`Seller`.`bank_account` AS `Seller_Account`,`Buyer`.`name` AS `Buyer`,`Buyer`.`credit_card` AS `Buyer_Credit_Card`,`Receipts`.`final_price` AS `Amount`, from (((`Receipts` join `Buyer` on((`Receipts`.`buyer` = `Buyer`.`id`))) join `Artwork` on((`Receipts`.`artwork` = `Artwork`.`id`))) join `Seller` on((`Artwork`.`seller` = `Seller`.`id`))) */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
