@@ -19,10 +19,6 @@
 -- Table structure for table `Artwork`
 --
 
-DROP DATABASE IF EXISTS `AuctionHouseDB`;
-CREATE DATABASE `AuctionHouseDB` DEFAULT CHARACTER SET `utf8`;
-USE `AuctionHouseDB`;
-
 DROP TABLE IF EXISTS `Artwork`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -43,7 +39,7 @@ CREATE TABLE `Artwork` (
   KEY `seller` (`seller`),
   CONSTRAINT `Artwork_ibfk_1` FOREIGN KEY (`location`) REFERENCES `AuctionHouse` (`id`),
   CONSTRAINT `Artwork_ibfk_2` FOREIGN KEY (`seller`) REFERENCES `Seller` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -71,7 +67,7 @@ CREATE TABLE `AuctionHouse` (
   `PostalCode` varchar(10) DEFAULT NULL,
   `Country` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +96,7 @@ CREATE TABLE `Buyer` (
   `Country` varchar(100) DEFAULT NULL,
   `CreditCard` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +130,7 @@ CREATE TABLE `Receipts` (
   CONSTRAINT `Receipts_ibfk_1` FOREIGN KEY (`artwork`) REFERENCES `Artwork` (`id`),
   CONSTRAINT `Receipts_ibfk_2` FOREIGN KEY (`auctionHouse`) REFERENCES `AuctionHouse` (`id`),
   CONSTRAINT `Receipts_ibfk_3` FOREIGN KEY (`buyer`) REFERENCES `Buyer` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=39 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -163,7 +159,7 @@ CREATE TABLE `Seller` (
   `Country` varchar(100) DEFAULT NULL,
   `BankAccount` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -175,6 +171,41 @@ LOCK TABLES `Seller` WRITE;
 INSERT INTO `Seller` VALUES (1,'Gareth Porter','33087283415','Bonvicino','33423','Italy','5452089674066613'),(2,'Matthew Conner','49698566788','Pomarolo','59680','Italy','5149089407843527'),(3,'Ezekiel Cunningham','43364708915','Harlingen','1311 LS','Netherlands','5549374821457872'),(4,'Karleigh Price','33089163063','Nuneaton','MB1C 0VY','United Kingdom','5194125538622549'),(5,'Aileen Mann','03242227399','Maltignano','22319','Italy','5514702754315694'),(6,'Porter Collier','13263750690','Woerden','7185 YK','Netherlands','5153070509030208'),(7,'Kiona Fowler','71639868446','Solesino','30903','Italy','5281668561562789'),(8,'Whitney Townsend','11379539720','Acquasparta','96512','Italy','5495227157386160'),(9,'Fredericka Nguyen','17518634146','Sorgà','34433','Italy','5119917354796841'),(10,'Vance Guerrero','87891151655','Altamura','52753','Italy','5532437967886243'),(11,'Quentin Donaldson','41109870250','Nijmegen','9034 QM','Netherlands','5232695081631653'),(12,'Colleen Beasley','44528345632','Durham','OG99 5HW','United Kingdom','5253704180892812'),(13,'Plato Dejesus','35944002858','Ammanford','O67 5MM','United Kingdom','5173130912451882'),(14,'Shannon Crane','88944393075','Horsham','U6H 0QE','United Kingdom','5423153620926522'),(15,'Kiara Barber','83294798634','Tufo','41043','Italy','5387761556721792'),(16,'Linda Bennett','15688682764','Helmond','9027 ZI','Netherlands','5438937611822788'),(17,'Knox Kline','01911767574','Milton Keynes','Z9V 0EZ','United Kingdom','5370108109589277'),(18,'Barclay Carpenter','88383697963','Helmond','6738 JV','Netherlands','5559509741837490'),(19,'Kareem Paul','42245508839','Portofino','71240','Italy','5502544796121183'),(20,'Petra Browning','27046804517','Montese','57379','Italy','5356059943555727');
 /*!40000 ALTER TABLE `Seller` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary view structure for view `Transfer`
+--
+
+DROP TABLE IF EXISTS `Transfer`;
+/*!50001 DROP VIEW IF EXISTS `Transfer`*/;
+SET @saved_cs_client     = @@character_set_client;
+/*!50503 SET character_set_client = utf8mb4 */;
+/*!50001 CREATE VIEW `Transfer` AS SELECT 
+ 1 AS `Transaction`,
+ 1 AS `SellerAccount`,
+ 1 AS `BuyerCreditcard`,
+ 1 AS `Amount`,
+ 1 AS `seller`,
+ 1 AS `buyer`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `Transfer`
+--
+
+/*!50001 DROP VIEW IF EXISTS `Transfer`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_0900_ai_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `Transfer` AS select `Receipts`.`id` AS `Transaction`,`Seller`.`BankAccount` AS `SellerAccount`,`Buyer`.`CreditCard` AS `BuyerCreditcard`,`Receipts`.`finalPrice` AS `Amount`,`Seller`.`Name` AS `seller`,`Buyer`.`Name` AS `buyer` from (((`Receipts` join `Buyer` on((`Receipts`.`buyer` = `Buyer`.`id`))) join `Artwork` on((`Receipts`.`artwork` = `Artwork`.`id`))) join `Seller` on((`Artwork`.`seller` = `Seller`.`id`))) */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -185,4 +216,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-03-03 18:43:53
+-- Dump completed on 2021-03-07 16:50:22

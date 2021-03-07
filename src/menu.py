@@ -8,11 +8,15 @@ Welcome to the AuctionHouse Database management tool!
 ---------------------------------------------------------------------
 '''
 
-QUERIES = (("List all buyer names", "SELECT name FROM Buyer"),
-           (),
-           (),
-           (),
-           ())
+QUERIES = ("Search artworks not yet sold by title or artist.",
+           "List all artworks not yet sold in an auction house by name.",
+           "List all the artworks purchased by a selected Buyer, and their final purchase price.",
+           "List all the artworks and status (sold or not with final price) by a seller.",
+           "Show buyers that spent more than a certain amount.",
+           "Show the total amount to transfer between sellers and buyers.",
+           "Show the total and average amount spent per country."
+           )
+
 
 DB_NAME = "AuctionHouseDB"
 
