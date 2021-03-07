@@ -52,7 +52,7 @@ def q1(cursor):
         title = 'title'
         artist = 'artist'
 
-    q = "SELECT title,artist,year,medium,dimensions,url,initialPrice " \
+    q = "SELECT title,artist,year,medium,dimensions,url,initial_price " \
         "FROM Artwork " \
         f"WHERE sold = 0 AND (title = {title} OR artist = {artist});"
 
@@ -64,9 +64,9 @@ def q2(cursor):
     name = input("Please enter the name of an auction house: ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
-        "Artwork.dimensions, Artwork.url, Artwork.initialPrice " \
+        "Artwork.dimensions, Artwork.url, Artwork.initial_price " \
         "FROM Artwork, AuctionHouse " \
-        f"WHERE Artwork.location = AuctionHouse.id AND sold = 0 AND AuctionHouse.Name = {name};"
+        f"WHERE Artwork.location = AuctionHouse.id AND sold = 0 AND AuctionHouse.name = {name};"
 
     query(cursor, q)
 
@@ -75,11 +75,11 @@ def q3(cursor):
     name = input("Please enter the name of a buyer")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
-        "Artwork.dimensions, Artwork.url, Receipts.finalPrice " \
+        "Artwork.dimensions, Artwork.url, Receipts.final_price " \
         "FROM Receipts " \
         "JOIN Buyer ON Receipts.buyer = Buyer.id " \
         "JOIN Artwork ON Receipts.artwork = Artwork.id " \
-        f"WHERE Buyer.Name = {name}"
+        f"WHERE Buyer.name = {name}"
 
     query(cursor, q)
 
@@ -88,9 +88,9 @@ def q4(cursor):
     name = input("Please enter the name of a seller: ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
-        "Artwork.dimensions, Artwork.url, Artwork.initialPrice, Artwork.sold, Receipts.finalPrice" \
+        "Artwork.dimensions, Artwork.url, Artwork.initial_price, Artwork.sold, Receipts.final_price" \
         "FROM Artwork, Receipts, Seller" \
-        f"WHERE Artwork.id = Receipts.artwork AND Artwork.seller = Seller.id AND Seller.Name = {name};"
+        f"WHERE Artwork.id = Receipts.artwork AND Artwork.seller = Seller.id AND Seller.name = {name};"
 
     query(cursor, q)
 
@@ -103,11 +103,11 @@ def q5(cursor):
         except ValueError:
             print("I'm sorry, that was not a valid number, please try again.")
 
-    q = "SELECT Buyer.name, SUM(Receipts.finalPrice) AS totalSpent " \
+    q = "SELECT Buyer.name, SUM(Receipts.final_price) AS total_spent " \
         "FROM Buyer " \
         "JOIN Receipts ON Receipts.buyer = Buyer.id " \
         "GROUP BY Receipts.buyer" \
-        "ORDER BY totalSpent DESC;"
+        "ORDER BY total_spent DESC;"
 
     query(cursor, q)
 
@@ -129,9 +129,9 @@ def q7(cursor):
         except ValueError:
             print("I'm sorry, that was not a valid number, please try again.")
 
-    q = "SELECT Artwork.title, Receipts.finalPrice " \
+    q = "SELECT Artwork.title, Receipts.final_price " \
         "FROM Artwork, Receipts " \
-        f"WHERE Receipts.artwork = Artwork.id AND Receipts.finalPrice > {price} " \
-        "ORDER BY Receipts.finalPrice DESC;"
+        f"WHERE Receipts.artwork = Artwork.id AND Receipts.final_price > {price} " \
+        "ORDER BY Receipts.final_price DESC;"
 
     query(cursor, q)
