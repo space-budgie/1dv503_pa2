@@ -61,28 +61,31 @@ def get_result(cursor):
 # Search unsold artworks by title or artist
 def q1(cursor):
     title = input("Please enter a title, or leave blank (example: Mackerel on a Plate): ")
-    artist = input("Please enter an artist, or leave blank (example: Perera, Ed): ")
+    artist = input("Please enter an artist, or leave blank (example: Penn Irving): ")
 
     # If both of them are empty, we want to list everything
     if (not title) and (not artist):
         title = 'title'
         artist = 'artist'
+    else:
+        title = "'"+ title +"'"
+        artist = "'"+ artist +"'"
 
     q = "SELECT title,artist,year,medium,dimensions,initial_price " \
         "FROM Artwork " \
-        f"WHERE sold = 0 AND (title = '{title}' OR artist = '{artist}');"
+        f"WHERE sold = 0 AND (title = {title} OR artist = {artist});"
 
     query(cursor, q)
     myresult = get_result(cursor)
 
     if myresult:
-        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
+        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','initial_price' ], tablefmt='psql'))
     input("Press enter to return to the main menu")
 
 # Search unsold by auction house
 # try: Phasellus LLC
 def q2(cursor):
-    name = input("Please enter the name of an auction house (example: Phasellus LLC: ")
+    name = input("Please enter the name of an auction house (example: Phasellus LLC): ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
         "Artwork.dimensions, Artwork.url, Artwork.initial_price " \
@@ -112,7 +115,7 @@ def q3(cursor):
     myresult = get_result(cursor)
 
     if myresult:
-        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price' ], tablefmt='psql'))
+        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','final_price' ], tablefmt='psql'))
     input("Press enter to return to the main menu")
 
 # List all the artwork and status (sold or not with final price of each in case is sold) by a selected seller
@@ -129,7 +132,7 @@ def q4(cursor):
     myresult = get_result(cursor)
 
     if myresult:
-        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price', 'sold', 'final_price'], tablefmt='psql'))
+        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','final_price', 'sold', 'final_price'], tablefmt='psql'))
     input("Press enter to return to the main menu")
 
 # Show buyers who spent more than a certain amount

@@ -30,7 +30,7 @@ DB_NAME = "AuctionHouseDB"
 # Main menu and choice handling
 def main_menu(cnx, cursor):
     print("\n")
-    print("Please select what you would like to do!")
+    print("Please select what you would like to do:")
 
     index = 0
 
@@ -43,7 +43,7 @@ def main_menu(cnx, cursor):
     free_query = index + 1
     print(f"{free_query}. Enter your own query")
     quit_application = index + 2
-    print(f"{quit_application}. Quit")
+    print(f"{quit_application}. Quit\n")
 
     # Make sure a valid choice is entered
     choice = 0
@@ -53,11 +53,11 @@ def main_menu(cnx, cursor):
 
             # quit is always the last mode, if it's higher than this or lower than 1, it's not a valid option
             if choice > quit_application or choice < 1:
-                print("That is not a valid choice, please try again.")
+                print("That is not a valid choice, please try again.\n")
                 choice = 0  # Make sure the loop runs again
 
         except ValueError:
-            print("That is not a valid integer, please try again.")
+            print("That is not a valid integer, please try again.\n")
 
     if choice == free_query:
         src.database_functions.free_query(cnx, cursor)
@@ -99,6 +99,6 @@ def run():
         print("Database doesn't exist yet! Creating it now...")
         src.database_creation.read_dump(cursor, setup.DUMP_LOCATION)
 
-    # Quiting is handled by this function and with the exit() method
+    # Quitting is handled by this function and with the exit() method
     while True:
         main_menu(cnx, cursor)
