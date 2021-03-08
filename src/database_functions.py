@@ -1,6 +1,7 @@
 import re
 import mysql.connector
 from tabulate import tabulate
+from mysql.connector import errorcode
 
 AUTO_COMMIT_ASKED = False
 
@@ -22,7 +23,14 @@ def free_query(cnx, cursor):
 
     try:
         cursor.execute(query_to_execute)
-        return True  # Executed successfully
+        header = [column[0] for column in cursor.description]
+
+        print(tabulate(cursor.fetchall(),
+                       headers=header,
+                       tablefmt='psql'))
+
+        input("Press enter to return to the main menu")
+
     except mysql.connector.Error as e:
         handle_query_error(query_to_execute, e)
         return False  # Executed unsuccessfully
@@ -43,30 +51,39 @@ def handle_query_error(query_to_execute, error):
         print(error)
 
 
+def get_result(cursor):
+    result = cursor.fetchall()
+    if result:
+        return result
+    else:
+        print("That query did not return anything.")
+
+
 # Search unsold artworks by title or artist
 def q1(cursor):
-    title = input("Please enter a title, or leave blank: ")
-    artist = input("Please enter an artist, or leave blank: ")
+    title = input("Please enter a title, or leave blank (example: Mackerel on a Plate): ")
+    artist = input("Please enter an artist, or leave blank (example: Perera, Ed): ")
 
     # If both of them are empty, we want to list everything
     if (not title) and (not artist):
         title = 'title'
         artist = 'artist'
 
-    q = "SELECT title,artist,year,medium,dimensions,url,initial_price " \
+    q = "SELECT title,artist,year,medium,dimensions,initial_price " \
         "FROM Artwork " \
-        f"WHERE sold = 0 AND (title = {title} OR artist = {artist});"
+        f"WHERE sold = 0 AND (title = '{title}' OR artist = '{artist}');"
 
     query(cursor, q)
-    myresult = cursor.fetchall()
+    myresult = get_result(cursor)
 
-    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
-
+    if myresult:
+        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
+    input("Press enter to return to the main menu")
 
 # Search unsold by auction house
 # try: Phasellus LLC
 def q2(cursor):
-    name = input("Please enter the name of an auction house: ")
+    name = input("Please enter the name of an auction house (example: Phasellus LLC: ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
         "Artwork.dimensions, Artwork.url, Artwork.initial_price " \
@@ -74,43 +91,49 @@ def q2(cursor):
         f"WHERE Artwork.location = AuctionHouse.id AND sold = 0 AND AuctionHouse.name = '{name}';"
 
     query(cursor, q)
-    myresult = cursor.fetchall()
+    myresult = get_result(cursor)
 
-    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
+    if myresult:
+        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','initial_price' ], tablefmt='psql'))
+    input("Press enter to return to the main menu")
 
 # List all purchased artwork (with final price of each) by a selected buyer
 # try: Yvonne Galloway
 def q3(cursor):
-    name = input("Please enter the name of a buyer: ")
+    name = input("Please enter the name of a buyer (example: Yvonne Galloway): ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
-        "Artwork.dimensions, Artwork.url, Receipts.final_price " \
+        "Artwork.dimensions, Receipts.final_price " \
         "FROM Receipts " \
         "JOIN Buyer ON Receipts.buyer = Buyer.id " \
         "JOIN Artwork ON Receipts.artwork = Artwork.id " \
         f"WHERE Buyer.name = '{name}';"
 
     query(cursor, q)
-    myresult = cursor.fetchall()
+    myresult = get_result(cursor)
 
-    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price' ], tablefmt='psql'))
+    if myresult:
+        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price' ], tablefmt='psql'))
+    input("Press enter to return to the main menu")
 
 # List all the artwork and status (sold or not with final price of each in case is sold) by a selected seller
 # try: Ezekiel Cunningham
 def q4(cursor):
-    name = input("Please enter the name of a seller: ")
+    name = input("Please enter the name of a seller (example: Ezekiel Cunningham): ")
 
     q = "SELECT Artwork.title, Artwork.artist, Artwork.year, Artwork.medium, " \
-        "Artwork.dimensions, Artwork.url, Artwork.initial_price, Artwork.sold, Receipts.final_price " \
+        "Artwork.dimensions, Artwork.initial_price, Artwork.sold, Receipts.final_price " \
         "FROM Artwork, Receipts, Seller " \
         f"WHERE Artwork.id = Receipts.artwork AND Artwork.seller = Seller.id AND Seller.name = '{name}';"
 
     query(cursor, q)
-    myresult = cursor.fetchall()
-    
-    print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price', 'sold', 'final_price'], tablefmt='psql'))
+    myresult = get_result(cursor)
 
-# ???
+    if myresult:
+        print(tabulate(myresult, headers=['title','artist','year','medium','dimensions','url','final_price', 'sold', 'final_price'], tablefmt='psql'))
+    input("Press enter to return to the main menu")
+
+# Show buyers who spent more than a certain amount
 def q5(cursor):
     amount = 0
     while not amount:
@@ -123,24 +146,28 @@ def q5(cursor):
         "FROM Buyer " \
         "JOIN Receipts ON Receipts.buyer = Buyer.id " \
         "GROUP BY Receipts.buyer " \
+        f"HAVING total_spent > {amount} " \
         "ORDER BY total_spent DESC;"
 
     query(cursor, q)
-    myresult = cursor.fetchall()
+    myresult = get_result(cursor)
 
-    print(tabulate(myresult, headers=['buyer name','total spent'], tablefmt='psql'))
+    if myresult:
+        print(tabulate(myresult, headers=['buyer name','total spent'], tablefmt='psql'))
+    input("Press enter to return to the main menu")
 
 # View table money transfer
 def q6(cursor):
-    q = "SELECT Seller, Seller_Account, Buyer, Buyer_Credit_Card, SUM(Amount) AS Amount " \
+    q = "SELECT Seller, Seller_Account, Buyer, Buyer_Credit_Card, Amount " \
         "FROM Transfer " \
-        "GROUP BY Buyer " \
-        "ORDER BY Buyer ASC;"
+        "ORDER BY Seller ASC;"
 
     query(cursor, q)
-    myresult = cursor.fetchall()
+    myresult = get_result(cursor)
 
-    print(tabulate(myresult, headers=['seller','seller bank account','buyer','buyer credit card','total amount'], tablefmt='psql'))
+    if myresult:
+        print(tabulate(myresult, headers=['seller','seller bank account','buyer','buyer credit card','total amount'], tablefmt='psql'))
+    input("Press enter to return to the main menu")
 
 # Artwork sold at a price higher than given
 def q7(cursor):
@@ -157,6 +184,8 @@ def q7(cursor):
         "ORDER BY Receipts.final_price DESC;"
 
     query(cursor, q)
-    myresult = cursor.fetchall()
+    myresult = get_result(cursor)
 
-    print(tabulate(myresult, headers=['artwork title','final price'], tablefmt='psql'))
+    if myresult:
+        print(tabulate(myresult, headers=['artwork title','final price'], tablefmt='psql'))
+    input("Press enter to return to the main menu")

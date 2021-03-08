@@ -1,6 +1,13 @@
 import mysql.connector
-import re
-import database_functions
+import src.database_functions
+import src.database_creation
+
+try:
+    import setup
+except:
+    print("Something seems to be wrong with your connection, please edit setup.py and check if your SQL server "
+          "is running.")
+    exit()
 
 HEADER = '''
 ---------------------------------------------------------------------
@@ -13,62 +20,11 @@ QUERIES = ("Search artworks not yet sold by title or artist.",
            "List all the artworks purchased by a selected Buyer, and their final purchase price.",
            "List all the artworks and status (sold or not with final price) by a seller.",
            "Show buyers that spent more than a certain amount.",
-           "Show the total amount to transfer between sellers and buyers.",
-           "Show the total and average amount spent per country."
+           "Show the amounts to transfer between sellers and buyers.",
+           "Show artworks with a final selling price higher than a specified number."
            )
 
-
 DB_NAME = "AuctionHouseDB"
-
-
-# Initial database setup
-def initial():
-    print(HEADER)
-    cnx = ""
-
-    # Run this until valid connection is formed
-    while not cnx:
-        username = input("Please enter the username of your MySQL installation: ")
-        password = input("Please enter the password of your MySQL installation: ")
-        extra = input("Do you want to configure host, port and auth_plugin? "
-                      "If not localhost, port 3306 and caching_sha2_password (for MySQL 8+) are used. [y/N]: ")
-
-        # Check if extra matches some form of yes
-        extra = bool(re.match("^(yes|y)$", extra, re.IGNORECASE))
-
-        if extra:
-            host = input("Please enter the host of your MySQL installation: ")
-            port = 0
-
-            # Make sure a valid integer is entered as the port
-            while not port:
-                try:
-                    port = int(input("Please enter the port of your MySQL installation: "))
-                except ValueError:  # Not a valid integer
-                    print("That is not a valid port, please try again.")
-            auth_plugin = input("Please enter the auth_plugin of your MySQL installation: ")
-
-        try:
-            if not extra:
-                cnx = mysql.connector.connect(user=username, password=password)
-            elif extra:
-                cnx = mysql.connector.connect(user=username, password=password,
-                                              host=host, port=port, auth_plugin=auth_plugin)
-
-        except mysql.connector.Error as e:
-            print("Something went wrong creating the connection!")
-            try_again = input("Would you like to try again? [Y/n or enter e to see the error message and try again]")
-
-            if re.match("^(no|n)$", try_again, re.IGNORECASE):
-                print("All right, bye then!")
-                exit()
-            elif re.match("^e$", try_again, re.IGNORECASE):
-                print(e)
-            else:
-                print("Trying again!\n")
-
-    # Lastly, return the valid connection
-    return cnx
 
 
 # Main menu and choice handling
@@ -82,7 +38,7 @@ def main_menu(cnx, cursor):
     for query in QUERIES:
         if query:
             index += 1
-            print(f"{index}. {query[0]}")
+            print(f"{index}. {query}")
 
     free_query = index + 1
     print(f"{free_query}. Enter your own query")
@@ -104,65 +60,45 @@ def main_menu(cnx, cursor):
             print("That is not a valid integer, please try again.")
 
     if choice == free_query:
-        # Allow the user to enter their own query, and print results if the query executed succesfully
-        if database_functions.free_query(cnx, cursor):
-            print_result(list(cursor), cursor.column_names)
+        src.database_functions.free_query(cnx, cursor)
 
     elif choice == quit_application:
         print("See you later!")
         exit()
 
-    else:
-        database_functions.query(cursor, QUERIES[choice - 1][1])
-        print_result(list(cursor), cursor.column_names)
+    elif choice == 1:
+        src.database_functions.q1(cursor)
+
+    elif choice == 2:
+        src.database_functions.q2(cursor)
+
+    elif choice == 3:
+        src.database_functions.q3(cursor)
+
+    elif choice == 4:
+        src.database_functions.q4(cursor)
+
+    elif choice == 5:
+        src.database_functions.q5(cursor)
+
+    elif choice == 6:
+        src.database_functions.q6(cursor)
+
+    elif choice == 7:
+        src.database_functions.q7(cursor)
 
 
-# Pretty printing of the result of a query
-def print_result(result, column_names):
-    if not result:
-        print("This query didn't return anything!")
-    else:
-
-        # Add the column names to the result for printing
-        result.insert(0, column_names)
-
-        # Find the highest length of all attributes
-
-        highest_length = 0
-        for entity in result:
-            for attribute in entity:
-
-                # Make sure the attribute exists
-                if attribute:
-                    attribute_length = len(str(attribute))
-                    if attribute_length > highest_length:
-                        highest_length = attribute_length
-
-        # The vertical row that should be printed after each row
-        # result[0] is the columns and therefore contains the right amount of data
-        vertical_row = "-" * highest_length * len(result[0]) + "--"
-
-        print(vertical_row)
-        for entity in result:
-            print("|", end="")
-            for attribute in entity:
-                # Print everything in a table aligned to the left, padded with the appropriate amount of spaces
-                print(f"{attribute}{' ' * (highest_length - len(str(attribute)))} |", end="")
-            print()
-            print(vertical_row)
-
-    input("Press enter to return to the main menu")
-
-
-def main():
-    cnx = initial()
+def run():
+    print(HEADER)
+    cnx = setup.cnx
     cursor = cnx.cursor()
-    cursor.execute(f"USE {DB_NAME}")
+
+    try:
+        cursor.execute(f"USE {DB_NAME}")
+    except mysql.connector.DatabaseError as e:
+        print("Database doesn't exist yet! Creating it now...")
+        src.database_creation.read_dump(cursor, setup.DUMP_LOCATION)
 
     # Quiting is handled by this function and with the exit() method
     while True:
         main_menu(cnx, cursor)
-
-
-if __name__ == '__main__':
-    main()
