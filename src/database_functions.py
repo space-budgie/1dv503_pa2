@@ -1,7 +1,6 @@
 import re
 import mysql.connector
 from tabulate import tabulate
-from mysql.connector import errorcode
 
 AUTO_COMMIT_ASKED = False
 
