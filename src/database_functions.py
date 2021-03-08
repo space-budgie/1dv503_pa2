@@ -61,7 +61,7 @@ def get_result(cursor):
 # Search unsold artworks by title or artist
 def q1(cursor):
     title = input("Please enter a title, or leave blank (example: Mackerel on a Plate): ")
-    artist = input("Please enter an artist, or leave blank (example: Perera, Ed): ")
+    artist = input("Please enter an artist, or leave blank (example: Perera Ed): ")
 
     # If both of them are empty, we want to list everything
     if (not title) and (not artist):
