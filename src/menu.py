@@ -21,7 +21,7 @@ QUERIES = ("Search artworks not yet sold by title or artist.",
            "List all the artworks and status (sold or not with final price) by a seller.",
            "Show buyers that spent more than a certain amount.",
            "Show the amounts to transfer between sellers and buyers.",
-           "Show artworks with a final selling price higher than a specified number."
+           "Show artworks with a final selling price higher than a specified amount."
            )
 
 DB_NAME = "AuctionHouseDB"
