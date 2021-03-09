@@ -6,11 +6,14 @@ import os
 
 
 def read_dump(cursor, location):
-    file = open(os.path.abspath(location))
-    sql = file.read()
+    try:
+        file = open(os.path.abspath(location))
+        sql = file.read()
 
-    for result in cursor.execute(sql, multi=True):
-        if result.with_rows:
-            result.fetchall()
+        for result in cursor.execute(sql, multi=True):
+            if result.with_rows:
+                result.fetchall()
 
-    file.close()
+        file.close()
+    except StopIteration:  # Ignore the StopIteration error
+        pass
