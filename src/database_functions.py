@@ -68,7 +68,7 @@ def q1(cursor):
         title = 'title'
         artist = 'artist'
     else:
-        title = "'"+ title +"'"
+        title = "'" + title +"'"
         artist = "'"+ artist +"'"
 
     q = "SELECT title,artist,year,medium,dimensions,initial_price " \
