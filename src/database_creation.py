@@ -15,5 +15,5 @@ def read_dump(cursor, location):
                 result.fetchall()
 
         file.close()
-    except StopIteration:  # Ignore the StopIteration error
+    except RuntimeError:  # Ignore the Runtime error that occurs during the iteration of the databasedump
         pass
